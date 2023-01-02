@@ -29,7 +29,7 @@ public class ItemController {
 
         model.addAttribute("form", new BookForm());
 
-        return "items/createItemForm";
+        return "/items/createItemForm";
     }
 
     @PostMapping("/items/new")
@@ -56,9 +56,8 @@ public class ItemController {
         log.info(item.get(0).toString());
         model.addAttribute("items", item);
 
-        return "items/itemList";
+        return "/items/itemList";
     }
-
 
     @GetMapping("/items/{id}/edit")
     public String updateItem(@PathVariable("id") Long id, Model model) {
@@ -66,6 +65,27 @@ public class ItemController {
         model.addAttribute("bookItem", bookItem);
 
         return "/items/updateItem";
+    }
+
+    @PostMapping("/items/{id}/edit")
+    public String updateItem(@PathVariable("id") Long id, BookForm bookForm) {
+        // db에서 가지고 와서
+        // db에서 findOne의 리턴 값을 확인해야함
+        // 강제 형변환이 필요할 수도 있음
+        Book bookItem = (Book)itemService.findOne(id);
+
+        //가지고 온걸 수정을 하고
+        bookItem.setName(bookForm.getName());
+        bookItem.setPrice(bookForm.getPrice());
+        bookItem.setStockQuantity(bookForm.getStockQuantity());
+        bookItem.setAuthor(bookForm.getAuthor());
+        bookItem.setIsbn(bookForm.getIsbn());
+
+        // db로 다시 보내준다
+        itemService.saveItem(bookItem);
+
+//        return "/items/itemList";
+        return "redirect:/items";
     }
 
 }

@@ -1,5 +1,6 @@
 package jpabook.jpashop.controller;
 
+import jpabook.jpashop.controller.form.OrderForm;
 import jpabook.jpashop.domain.*;
 import jpabook.jpashop.repository.ItemRepository;
 import jpabook.jpashop.repository.MemberRepository;
@@ -7,9 +8,15 @@ import jpabook.jpashop.service.ItemService;
 import jpabook.jpashop.service.MemberService;
 import jpabook.jpashop.service.OrderService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.Banner;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
@@ -19,32 +26,29 @@ public class OrderController {
     private final MemberService memberService;
     private final ItemService itemService;
 
-    @GetMapping("/order")
-    @ResponseBody
-    public Order order() {
-        // 1. 멤버 생성 확인
-        Member member = new Member();
-        member.setName("이재석");
-        member.setAddress(new Address("경기도", "만안구", "11111"));
-//        memberService.join(member);
-        Long memberId = memberService.join(member);
+    @GetMapping("/orders/new")
+        public String createOrder(Model model) {
 
-        // 2. 상품 생성 // 3. 상품 가격
-        Item book = new Book();
-        book.setName("해리포터");
-        book.setPrice(12000);
-        book.setStockQuantity(20);
-//        itemService.saveItem(book);
-        Long itemId = itemService.saveItem(book);
+        // 멤버 가져오기 -- 번호로?
+        List<Member> members = memberService.findMembers();
+        model.addAttribute("members", members);
 
-        // 주문!
-        // 주문조회 (다시 가져오기) -> 클라이언트한테 응답
-        //                                           memberId     itemId
-        Long orderId = orderService.order(member.getId(), book.getId(), 20);
+        // 상품 리스트에서 상품 가져오기
+        List<Item> items = itemService.findItems();
+        model.addAttribute("items", items);
 
-        return orderService.findOne(orderId);
+        return "/orders/orderForm";
     }
 
+    @PostMapping("/order")
+    // 선택한 내용을 저장
+    public String productOrder(OrderForm orderForm) {
+        Member member = memberService.findOne(orderForm.getMemberId());
+        Item item = itemService.findOne(orderForm.getItemId());
+        int count = orderForm.getCount();
 
+        orderService.order(member.getId(), item.getId(), count);
 
+        return "redirect:/";
+    }
 }
