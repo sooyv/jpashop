@@ -15,7 +15,7 @@ import java.lang.reflect.Type;
 import java.util.List;
 
 @Service
-@Transactional
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class OrderService {
 

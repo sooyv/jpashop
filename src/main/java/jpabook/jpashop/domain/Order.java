@@ -21,7 +21,7 @@ public class Order {
 
     // 연관관계의 주인 : FK 있는 쪽 (Order)
     // 지연 로딩
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "member_id") // -> DB의 FK
     private Member member;  //member table의 member_id (FK)로 하겠다는 것을 jpa에게 알려줌
 
@@ -72,7 +72,7 @@ public class Order {
     }
     //주문 취소 - 배송이 완료 되었으면 주문 취소 안됌
     public void cancel() {
-        if(delivery.getStatus() == DeliveryStatus.READY.COMP) {
+        if(this.delivery.getStatus() == DeliveryStatus.COMP) {
             throw new IllegalStateException("이미 배송 완료된 상품은 취소할 수 없습니다.");
         }
         this.setStatus(OrderStatus.CANCEL);
