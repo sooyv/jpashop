@@ -26,7 +26,7 @@ public class Order {
     private Member member;  //member table의 member_id (FK)로 하겠다는 것을 jpa에게 알려줌
 
     @JsonIgnore
-    @OneToMany(mappedBy = "order")
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     private List<OrderItem> orderItems = new ArrayList<>();
 
     @JsonIgnore                         //엔티티의 상태가 변하면, 연관된 엔티티까지 알려준다?
