@@ -3,6 +3,8 @@ package jpabook.jpashop.controller;
 import jpabook.jpashop.controller.form.BookForm;
 import jpabook.jpashop.domain.Book;
 import jpabook.jpashop.domain.Item;
+import jpabook.jpashop.domain.Order;
+import jpabook.jpashop.domain.OrderItem;
 import jpabook.jpashop.service.ItemService;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -88,10 +90,14 @@ public class ItemController {
         return "redirect:/items";
     }
 
-//    @GetMapping("/items/{id}/delete")
-//    public String deleteItem(@PathVariable("id") Long id) {
-//        itemService.
-//        return "redirect:/items";
-//    }
+    @GetMapping("/items/{id}/delete")
+    public String deleteItem(@PathVariable("id") Long id) {
+
+        // 상품을 지우기 전에 상품과 관련된 것들을 지워줘야함.
+        Item item = itemService.findOne(id);
+        itemService.delete(item);
+
+        return "redirect:/items";
+    }
 
 }

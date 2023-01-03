@@ -29,7 +29,8 @@ public class ItemRepository {
         return em.createQuery("select i from Item i", Item.class).getResultList();
     }
 
-//    public List<Item> delete(Item item) {
-//        return em.remove(item);
-//    }
+    // 삭제하기 기능 추가
+    public void delete(Item item) {
+        em.remove(item);
+    }
 }
